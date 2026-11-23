@@ -1,298 +1,125 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tunevoice v0</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230A0F1D'/%3E%3Cpath d='M16 6v20M10 11v10M22 13v6M6 14v4M26 14v4' stroke='%2300E676' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Vocal Pitch Monitor & Tuner Pro</title>
+  <meta name="theme-color" content="#0b0e14">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%25' stop-color='%2306b6d4'/><stop offset='100%25' stop-color='%2310b981'/></linearGradient></defs><rect width='64' height='64' rx='16' fill='url(%23g)'/><path d='M32 14a7 7 0 0 0-7 7v12a7 7 0 0 0 14 0V21a7 7 0 0 0-7-7zm-12 19a12 12 0 0 0 24 0h-3a9 9 0 0 1-18 0h-3zm10.5 14.9V52h3v-4.1A15 15 0 0 0 47 33h-3a12 12 0 0 1-24 0h-3a15 15 0 0 0 13.5 14.9z' fill='%230b0e14'/></svg>">
+  <link id="pwaManifest" rel="manifest">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap');
-    
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #0d1117;
-      color: #e6edf3;
+      background-color: #0b0e14;
+      color: #f8fafc;
       user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
-
     .font-mono-code {
       font-family: 'JetBrains Mono', monospace;
     }
-
-    /* Custom glow effects */
-    .glow-cyan {
-      box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.4);
-    }
-    .glow-emerald {
-      box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.4);
-    }
     .text-glow {
-      text-shadow: 0 0 12px currentColor;
+      text-shadow: 0 0 18px currentColor;
     }
-
-    /* Custom scrollbar */
+    /* Custom scrollbar for sleek DAW aesthetic */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
     }
     ::-webkit-scrollbar-track {
-      background: #111827;
+      background: #0f131a;
     }
     ::-webkit-scrollbar-thumb {
-      background: #374151;
+      background: #27303f;
       border-radius: 3px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: #4b5563;
-    }
-
-    /* Needle transition */
-    .needle {
-      transition: transform 0.08s cubic-bezier(0.1, 0.9, 0.2, 1);
-      transform-origin: bottom center;
+      background: #384459;
     }
   </style>
 </head>
 <body class="min-h-screen flex flex-col bg-[#0b0e14] text-slate-100 antialiased overflow-x-hidden">
 
   <!-- Header -->
-  <header class="border-b border-slate-800/80 bg-[#111622]/90 backdrop-blur px-4 py-3 sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 to-emerald-500 flex items-center justify-center text-white shadow-lg shadow-cyan-500/20">
-          <i class="fa-solid fa-microphone-lines text-lg"></i>
+  <header class="border-b border-slate-800/80 bg-[#111622]/95 backdrop-blur px-3 py-2 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-2">
+      <div class="flex items-center space-x-2.5">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-600 to-emerald-500 flex items-center justify-center text-white shadow-md shadow-cyan-500/20 flex-shrink-0">
+          <i class="fa-solid fa-microphone-lines text-sm"></i>
         </div>
-        <div>
-          <h1 class="text-base sm:text-lg font-bold tracking-tight text-white flex items-center gap-2">
-            Tunevoice V0 <span class="text-xs px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800/60 font-mono-code font-semibold">STUDIO</span>
+        <div class="leading-tight">
+          <h1 class="text-sm sm:text-base font-bold tracking-tight text-white flex items-center gap-1.5">
+            VocalPitch <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800/60 font-mono-code font-semibold">STUDIO</span>
           </h1>
-          <p class="text-xs text-slate-400">Monitor de entonación y afinador en tiempo real</p>
+          <p class="text-[11px] text-slate-400 hidden sm:block">Monitor de entonación y afinador en tiempo real</p>
         </div>
       </div>
 
-      <!-- Quick Action Controls -->
-      <div class="flex items-center gap-2 sm:gap-3">
-        <button id="toggleMicBtn" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 hover:brightness-110 active:scale-95 shadow-md shadow-emerald-500/10">
-          <i class="fa-solid fa-microphone text-sm" id="micIcon"></i>
-          <span id="micBtnText">Activar Micrófono</span>
+      <!-- Quick Action Controls (Icon-only with Hover & Long-Press Tooltip) -->
+      <div class="flex items-center gap-2 relative">
+        <button id="installAppBtn" title="Instalar aplicación" aria-label="Instalar aplicación" class="hidden items-center justify-center w-9 h-9 rounded-xl border border-cyan-700/70 bg-cyan-950/60 hover:bg-cyan-900/70 text-cyan-300 transition active:scale-95">
+          <i class="fa-solid fa-download text-xs"></i>
         </button>
 
-        <button id="clearBtn" title="Limpiar trazo" class="p-2.5 rounded-xl border border-slate-700/80 bg-slate-800/50 hover:bg-slate-700/60 text-slate-300 hover:text-white transition active:scale-95">
-          <i class="fa-solid fa-trash-can text-sm"></i>
+        <button id="clearBtn" title="Limpiar trazo" aria-label="Limpiar trazo" class="w-9 h-9 flex items-center justify-center rounded-xl border border-slate-700/80 bg-slate-800/60 hover:bg-slate-700/70 text-slate-300 hover:text-white transition active:scale-95">
+          <i class="fa-solid fa-trash-can text-xs"></i>
         </button>
+
+        <div class="relative group">
+          <button id="toggleMicBtn" aria-label="Activar Micrófono" class="w-10 h-9 flex items-center justify-center rounded-xl font-semibold text-sm transition-all duration-200 bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 hover:brightness-110 active:scale-95 shadow-md shadow-emerald-500/20">
+            <i class="fa-solid fa-microphone text-sm" id="micIcon"></i>
+          </button>
+          <div id="micTooltip" role="tooltip" class="pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 absolute right-0 top-full mt-2 px-2.5 py-1 rounded-lg bg-slate-900 text-slate-100 text-[11px] font-medium whitespace-nowrap border border-slate-700 shadow-xl z-50">
+            Activar Micrófono
+          </div>
+        </div>
       </div>
     </div>
   </header>
 
   <!-- Main Workspace -->
-  <main class="max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6 flex-1 flex flex-col gap-4">
+  <main class="max-w-7xl w-full mx-auto p-2 sm:p-3 flex-1 flex flex-col gap-2.5">
 
-    <!-- Top Dashboard: Tuner Gauges & Scale Selector -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-      
-      <!-- Current Note & Cent Meter (DAW Tuner) -->
-      <div class="lg:col-span-5 bg-gradient-to-b from-[#131926] to-[#0f1420] border border-slate-800/90 rounded-2xl p-4 flex flex-col justify-between shadow-xl">
-        <div class="flex items-center justify-between border-b border-slate-800/80 pb-2 mb-2">
-          <span class="text-xs font-semibold text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" id="liveDot" style="display: none;"></span>
-            Afinador en Vivo
-          </span>
-          <span id="signalStatusBadge" class="text-[11px] font-mono-code px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700/60">
-            Silencio / En espera
-          </span>
-        </div>
-
-        <div class="grid grid-cols-2 items-center py-2 gap-4">
-          <!-- Big Note Display -->
-          <div class="flex flex-col items-center justify-center p-3 rounded-xl bg-slate-900/60 border border-slate-800/60">
-            <div id="noteDisplay" class="text-5xl sm:text-6xl font-extrabold font-mono-code text-slate-500 transition-colors duration-150">
-              --
-            </div>
-            <div class="flex items-center gap-1.5 mt-1">
-              <span id="octaveDisplay" class="text-xs font-bold text-slate-400 font-mono-code">Octava: -</span>
-              <span class="text-slate-600">•</span>
-              <span id="hzDisplay" class="text-xs font-bold text-slate-400 font-mono-code">0.0 Hz</span>
-            </div>
-          </div>
-
-          <!-- Scale Affinity & Accuracy badge -->
-          <div class="flex flex-col justify-center space-y-2">
-            <div class="bg-slate-900/60 border border-slate-800/60 p-2.5 rounded-xl">
-              <span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">En Escala</span>
-              <div id="scaleAffinity" class="text-sm font-semibold text-slate-400 flex items-center gap-1.5">
-                <i class="fa-solid fa-circle-question text-xs"></i> <span>No analizado</span>
-              </div>
-            </div>
-
-            <div class="bg-slate-900/60 border border-slate-800/60 p-2.5 rounded-xl">
-              <span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Desviación (Cents)</span>
-              <div class="flex items-baseline gap-1">
-                <span id="centsNumber" class="text-xl font-extrabold font-mono-code text-slate-300">0</span>
-                <span class="text-xs text-slate-500 font-mono-code">¢</span>
-                <span id="tuningFeedback" class="ml-auto text-xs font-semibold text-slate-400">Neutro</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tuner Needle / Cent Gauge Bar -->
-        <div class="mt-2 pt-2 border-t border-slate-800/70">
-          <div class="flex justify-between text-[10px] font-mono-code text-slate-500 mb-1 px-1">
-            <span>-50¢ (Bemol)</span>
-            <span class="text-emerald-400 font-bold">0¢ (Perfecto)</span>
-            <span>+50¢ (Sostenido)</span>
-          </div>
-
-          <div class="relative h-6 bg-slate-950 rounded-lg border border-slate-800 flex items-center px-1 overflow-hidden">
-            <!-- Center target window (tolerance ±15 cents) -->
-            <div class="absolute left-1/2 -translate-x-1/2 w-[30%] h-full bg-emerald-500/10 border-x border-emerald-500/30 pointer-events-none"></div>
-            <!-- Center hairline -->
-            <div class="absolute left-1/2 -translate-x-1/2 w-0.5 h-full bg-emerald-400 z-10 opacity-70"></div>
-
-            <!-- Indicator needle marker -->
-            <div id="tunerPointer" class="absolute top-1 bottom-1 w-2 rounded-full bg-slate-500 -translate-x-1/2 transition-all duration-75 shadow-md" style="left: 50%;"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Scale, Key & Audio Configuration -->
-      <div class="lg:col-span-7 bg-[#131926] border border-slate-800/90 rounded-2xl p-4 flex flex-col justify-between shadow-xl gap-4">
-        
-        <div>
-          <div class="flex items-center justify-between border-b border-slate-800/80 pb-2 mb-3">
-            <span class="text-xs font-semibold text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
-              <i class="fa-solid fa-music text-cyan-400"></i> Configuración de Tonalidad y Escala
-            </span>
-            <span class="text-xs text-slate-400">Guía de Afinación</span>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <!-- Root Key -->
-            <div>
-              <label for="rootKeySelect" class="block text-xs font-medium text-slate-300 mb-1">Tonalidad Fundamental</label>
-              <div class="relative">
-                <select id="rootKeySelect" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition appearance-none">
-                  <option value="0">C (Do)</option>
-                  <option value="1">C# / Db</option>
-                  <option value="2">D (Re)</option>
-                  <option value="3">D# / Eb</option>
-                  <option value="4">E (Mi)</option>
-                  <option value="5">F (Fa)</option>
-                  <option value="6">F# / Gb</option>
-                  <option value="7">G (Sol)</option>
-                  <option value="8">G# / Ab</option>
-                  <option value="9">A (La)</option>
-                  <option value="10">A# / Bb</option>
-                  <option value="11">B (Si)</option>
-                </select>
-                <i class="fa-solid fa-chevron-down text-xs text-slate-400 absolute right-3 top-3 pointer-events-none"></i>
-              </div>
-            </div>
-
-            <!-- Scale Type -->
-            <div>
-              <label for="scaleTypeSelect" class="block text-xs font-medium text-slate-300 mb-1">Tipo de Escala</label>
-              <div class="relative">
-                <select id="scaleTypeSelect" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition appearance-none">
-                  <option value="major">Mayor Natural (Jónica)</option>
-                  <option value="minor">Menor Natural (Eólica)</option>
-                  <option value="pentatonic_maj">Pentatónica Mayor</option>
-                  <option value="pentatonic_min">Pentatónica Menor</option>
-                  <option value="blues">Blues</option>
-                  <option value="dorian">Dórica</option>
-                  <option value="mixolydian">Mixolidia</option>
-                  <option value="chromatic">Cromática (Todas las notas)</option>
-                </select>
-                <i class="fa-solid fa-chevron-down text-xs text-slate-400 absolute right-3 top-3 pointer-events-none"></i>
-              </div>
-            </div>
-          </div>
-
-          <!-- Active Notes in Scale Badges -->
-          <div class="mt-3">
-            <span class="text-[11px] font-medium text-slate-400 block mb-1.5">Notas objetivo en esta escala:</span>
-            <div id="scaleNotesPills" class="flex flex-wrap gap-1.5">
-              <!-- Dynamically populated -->
-            </div>
-          </div>
-        </div>
-
-        <!-- Range and Sensitivity Controls -->
-        <div class="pt-3 border-t border-slate-800/80 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-          <div>
-            <label class="text-slate-400 block mb-1 flex justify-between">
-              <span>Rango Vocal</span>
-              <span id="rangeLabel" class="font-mono-code text-cyan-400">A2 - C6</span>
-            </label>
-            <select id="vocalRangePreset" class="w-full bg-slate-900 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none">
-              <option value="all">Completo (E2 - C6)</option>
-              <option value="soprano">Soprano / Agudo (C4 - A5)</option>
-              <option value="alto">Alto / Medio-Agudo (F3 - F5)</option>
-              <option value="tenor">Tenor / Medio (C3 - A4)</option>
-              <option value="bass">Bajo / Grave (E2 - E4)</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="text-slate-400 block mb-1 flex justify-between">
-              <span>Umbral de Ruido</span>
-              <span id="clarityThresholdVal" class="font-mono-code text-cyan-400">0.88</span>
-            </label>
-            <input type="range" id="claritySlider" min="0.70" max="0.96" step="0.02" value="0.88" class="w-full accent-cyan-400 cursor-pointer">
-          </div>
-
-          <div>
-            <label class="text-slate-400 block mb-1 flex justify-between">
-              <span>Velocidad de Scroll</span>
-              <span id="speedLabel" class="font-mono-code text-cyan-400">Med</span>
-            </label>
-            <select id="scrollSpeedSelect" class="w-full bg-slate-900 border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none">
-              <option value="1.5">Lento</option>
-              <option value="2.5" selected>Normal</option>
-              <option value="4.0">Rápido</option>
-            </select>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Main Visualizer (Continuous Pitch Roll Canvas) -->
-    <div class="relative flex-1 bg-[#0a0d14] border border-slate-800/90 rounded-2xl overflow-hidden shadow-2xl flex flex-col min-h-[460px]">
+    <!-- 1. Gráfico en Vivo (Protagonista justo debajo del título) -->
+    <section class="relative bg-[#0a0d14] border border-slate-800/90 rounded-2xl overflow-hidden shadow-2xl flex flex-col h-[50vh] min-h-[300px] sm:min-h-[380px]">
       
       <!-- Canvas Bar Legend -->
-      <div class="px-4 py-2 bg-slate-900/80 border-b border-slate-800 flex flex-wrap items-center justify-between text-xs gap-3">
-        <div class="flex items-center gap-4">
-          <div class="flex items-center gap-1.5">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/50"></span>
-            <span class="text-slate-300">Afinado (≤ 15¢)</span>
+      <div class="px-3 py-1.5 bg-slate-900/85 border-b border-slate-800 flex flex-wrap items-center justify-between text-[11px] gap-2">
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/50"></span>
+            <span class="text-slate-300">Afinado (≤15¢)</span>
           </div>
-          <div class="flex items-center gap-1.5">
-            <span class="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-sm shadow-amber-400/50"></span>
-            <span class="text-slate-300">Desviado (15¢ - 30¢)</span>
+          <div class="flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-amber-400 shadow-sm shadow-amber-400/50"></span>
+            <span class="text-slate-300">Desviado (15-30¢)</span>
           </div>
-          <div class="flex items-center gap-1.5">
-            <span class="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-sm shadow-rose-500/50"></span>
-            <span class="text-slate-300">Desafinado (> 30¢)</span>
+          <div class="flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-rose-500 shadow-sm shadow-rose-500/50"></span>
+            <span class="text-slate-300">Desafinado (&gt;30¢)</span>
           </div>
         </div>
 
-        <div class="flex items-center gap-3 text-slate-400 font-mono-code text-[11px]">
-          <span class="flex items-center gap-1.5">
-            <span class="w-3 h-0.5 bg-cyan-400/80 inline-block"></span>
-            <span>Notas de la Escala</span>
+        <div class="flex items-center gap-2 text-slate-400 font-mono-code text-[10px]">
+          <span class="flex items-center gap-1">
+            <span class="w-2.5 h-0.5 bg-cyan-400/80 inline-block"></span>
+            <span>Escala</span>
           </span>
           <span class="hidden sm:inline">•</span>
-          <span class="hidden sm:inline">Scroll: Tiempo Real &larr;</span>
+          <span class="hidden sm:inline">Tiempo Real &larr;</span>
         </div>
       </div>
 
       <!-- Container with relative positioning for canvas and piano gutter -->
       <div class="relative w-full flex-1 flex overflow-hidden" id="canvasContainer">
         <!-- Vertical Piano Key Labels on the Left -->
-        <div id="pianoLabels" class="w-14 sm:w-16 bg-[#0e131d] border-r border-slate-800 relative select-none flex-shrink-0 z-20">
+        <div id="pianoLabels" class="w-12 sm:w-14 bg-[#0e131d] border-r border-slate-800 relative select-none flex-shrink-0 z-20">
           <!-- Dynamically populated absolute note labels -->
         </div>
 
@@ -301,48 +128,269 @@
           <canvas id="pitchCanvas" class="w-full h-full block bg-[#090c12]"></canvas>
 
           <!-- Current Time Indicator Needle Line -->
-          <div class="absolute right-12 top-0 bottom-0 w-0.5 bg-cyan-400/60 pointer-events-none shadow-[0_0_8px_rgba(34,211,238,0.8)] z-10 flex flex-col justify-between items-center">
-            <span class="bg-cyan-500 text-slate-950 font-mono-code text-[9px] font-bold px-1 rounded-sm mt-1 -translate-x-0">LIVE</span>
+          <div class="absolute right-10 sm:right-12 top-0 bottom-0 w-0.5 bg-cyan-400/60 pointer-events-none shadow-[0_0_8px_rgba(34,211,238,0.8)] z-10 flex flex-col justify-between items-center">
+            <span class="bg-cyan-500 text-slate-950 font-mono-code text-[9px] font-bold px-1 rounded-sm mt-1">LIVE</span>
             <i class="fa-solid fa-caret-down text-cyan-400 text-xs mb-1"></i>
           </div>
         </div>
       </div>
 
       <!-- Audio Level Meter Floating Bar -->
-      <div class="absolute bottom-2 left-16 sm:left-20 bg-slate-950/80 backdrop-blur border border-slate-800 rounded-lg px-2.5 py-1.5 flex items-center gap-2 z-30">
+      <div class="absolute bottom-2 left-14 sm:left-16 bg-slate-950/85 backdrop-blur border border-slate-800 rounded-lg px-2 py-1 flex items-center gap-1.5 z-30">
         <i class="fa-solid fa-volume-low text-[10px] text-slate-400"></i>
-        <div class="w-20 sm:w-28 h-2 bg-slate-800 rounded-full overflow-hidden">
+        <div class="w-16 sm:w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden">
           <div id="volumeBar" class="h-full bg-gradient-to-r from-emerald-500 via-cyan-400 to-rose-500 w-0 transition-all duration-75"></div>
         </div>
       </div>
+    </section>
 
-    </div>
+    <!-- 2. Afinador en Vivo (Compacto) -->
+    <section class="bg-gradient-to-b from-[#131926] to-[#0f1420] border border-slate-800/90 rounded-2xl p-3 flex flex-col gap-2.5 shadow-lg">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-1.5">
+        <span class="text-[11px] font-semibold text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" id="liveDot" style="display: none;"></span>
+          Afinador en Vivo
+        </span>
+        <span id="signalStatusBadge" class="text-[10px] font-mono-code px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700/60">
+          Silencio / En espera
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-12 items-center gap-2.5">
+        <!-- Big Note Display -->
+        <div class="sm:col-span-4 flex items-center justify-between sm:justify-center gap-3 px-3 py-2 rounded-xl bg-slate-900/70 border border-slate-800/70">
+          <div id="noteDisplay" class="text-3xl sm:text-4xl font-extrabold font-mono-code text-slate-500 transition-colors duration-150">
+            --
+          </div>
+          <div class="flex flex-col text-right sm:text-left">
+            <span id="octaveDisplay" class="text-[11px] font-bold text-slate-400 font-mono-code">Octava: -</span>
+            <span id="hzDisplay" class="text-[11px] font-bold text-slate-400 font-mono-code">0.0 Hz</span>
+          </div>
+        </div>
+
+        <!-- Scale Affinity & Accuracy badge -->
+        <div class="sm:col-span-8 grid grid-cols-2 gap-2">
+          <div class="bg-slate-900/70 border border-slate-800/70 px-3 py-2 rounded-xl flex flex-col justify-center">
+            <span class="text-[10px] uppercase font-bold text-slate-400 block">En Escala</span>
+            <div id="scaleAffinity" class="text-xs sm:text-sm font-semibold text-slate-400 flex items-center gap-1.5 mt-0.5">
+              <i class="fa-solid fa-circle-question text-xs"></i> <span>No analizado</span>
+            </div>
+          </div>
+
+          <div class="bg-slate-900/70 border border-slate-800/70 px-3 py-2 rounded-xl flex flex-col justify-center">
+            <span class="text-[10px] uppercase font-bold text-slate-400 block">Desviación (Cents)</span>
+            <div class="flex items-baseline gap-1 mt-0.5">
+              <span id="centsNumber" class="text-base sm:text-lg font-extrabold font-mono-code text-slate-300">0</span>
+              <span class="text-[11px] text-slate-500 font-mono-code">¢</span>
+              <span id="tuningFeedback" class="ml-auto text-[11px] font-semibold text-slate-400 truncate">Neutro</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tuner Needle / Cent Gauge Bar -->
+      <div>
+        <div class="flex justify-between text-[10px] font-mono-code text-slate-500 mb-1 px-0.5">
+          <span>-50¢ (Bemol)</span>
+          <span class="text-emerald-400 font-bold">0¢ (Perfecto)</span>
+          <span>+50¢ (Sostenido)</span>
+        </div>
+
+        <div class="relative h-5 bg-slate-950 rounded-lg border border-slate-800 flex items-center px-1 overflow-hidden">
+          <div class="absolute left-1/2 -translate-x-1/2 w-[30%] h-full bg-emerald-500/10 border-x border-emerald-500/30 pointer-events-none"></div>
+          <div class="absolute left-1/2 -translate-x-1/2 w-0.5 h-full bg-emerald-400 z-10 opacity-70"></div>
+          <div id="tunerPointer" class="absolute top-1 bottom-1 w-2 rounded-full bg-slate-500 -translate-x-1/2 transition-all duration-75 shadow-md" style="left: 50%;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Configuración de Tonalidad y Escala -->
+    <section class="bg-[#131926] border border-slate-800/90 rounded-2xl p-3 flex flex-col gap-2.5 shadow-lg">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-1.5">
+        <span class="text-[11px] font-semibold text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
+          <i class="fa-solid fa-music text-cyan-400"></i> Configuración de Tonalidad y Escala
+        </span>
+        <span class="text-[11px] text-slate-400">Guía de Afinación</span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        <!-- Root Key -->
+        <div>
+          <label for="rootKeySelect" class="block text-[11px] font-medium text-slate-300 mb-1">Tonalidad Fundamental</label>
+          <div class="relative">
+            <select id="rootKeySelect" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs sm:text-sm text-slate-100 focus:outline-none focus:border-cyan-500 transition appearance-none">
+              <option value="0">C (Do)</option>
+              <option value="1">C# / Db</option>
+              <option value="2">D (Re)</option>
+              <option value="3">D# / Eb</option>
+              <option value="4">E (Mi)</option>
+              <option value="5">F (Fa)</option>
+              <option value="6">F# / Gb</option>
+              <option value="7">G (Sol)</option>
+              <option value="8">G# / Ab</option>
+              <option value="9">A (La)</option>
+              <option value="10">A# / Bb</option>
+              <option value="11">B (Si)</option>
+            </select>
+            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 absolute right-3 top-2.5 pointer-events-none"></i>
+          </div>
+        </div>
+
+        <!-- Scale Type -->
+        <div>
+          <label for="scaleTypeSelect" class="block text-[11px] font-medium text-slate-300 mb-1">Tipo de Escala</label>
+          <div class="relative">
+            <select id="scaleTypeSelect" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs sm:text-sm text-slate-100 focus:outline-none focus:border-cyan-500 transition appearance-none">
+              <option value="major">Mayor Natural (Jónica)</option>
+              <option value="minor">Menor Natural (Eólica)</option>
+              <option value="pentatonic_maj">Pentatónica Mayor</option>
+              <option value="pentatonic_min">Pentatónica Menor</option>
+              <option value="blues">Blues</option>
+              <option value="dorian">Dórica</option>
+              <option value="mixolydian">Mixolidia</option>
+              <option value="chromatic">Cromática (Todas las notas)</option>
+            </select>
+            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 absolute right-3 top-2.5 pointer-events-none"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Notes in Scale Badges -->
+      <div class="flex flex-wrap items-center gap-1.5 pt-0.5">
+        <span class="text-[11px] font-medium text-slate-400 mr-1">Notas objetivo:</span>
+        <div id="scaleNotesPills" class="flex flex-wrap gap-1">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Rango Vocal y Parámetros -->
+    <section class="bg-[#131926] border border-slate-800/90 rounded-2xl p-3 flex flex-col gap-2.5 shadow-lg">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-1.5">
+        <span class="text-[11px] font-semibold text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
+          <i class="fa-solid fa-sliders text-emerald-400"></i> Rango Vocal y Sensibilidad
+        </span>
+        <span id="rangeLabel" class="font-mono-code text-[11px] text-cyan-400 font-semibold">E2 - C6</span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+        <div>
+          <label for="vocalRangePreset" class="text-slate-400 block mb-1">Rango Vocal</label>
+          <select id="vocalRangePreset" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-500">
+            <option value="all">Completo (E2 - C6)</option>
+            <option value="soprano">Soprano / Agudo (C4 - A5)</option>
+            <option value="alto">Alto / Medio-Agudo (F3 - F5)</option>
+            <option value="tenor">Tenor / Medio (C3 - A4)</option>
+            <option value="bass">Bajo / Grave (E2 - E4)</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="claritySlider" class="text-slate-400 block mb-1 flex justify-between">
+            <span>Umbral de Ruido</span>
+            <span id="clarityThresholdVal" class="font-mono-code text-cyan-400">0.88</span>
+          </label>
+          <input type="range" id="claritySlider" min="0.70" max="0.96" step="0.02" value="0.88" class="w-full accent-cyan-400 cursor-pointer mt-1">
+        </div>
+
+        <div>
+          <label for="scrollSpeedSelect" class="text-slate-400 block mb-1 flex justify-between">
+            <span>Velocidad de Scroll</span>
+            <span id="speedLabel" class="font-mono-code text-cyan-400">Normal</span>
+          </label>
+          <select id="scrollSpeedSelect" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-500">
+            <option value="1.5">Lento</option>
+            <option value="2.5" selected>Normal</option>
+            <option value="4.0">Rápido</option>
+          </select>
+        </div>
+      </div>
+    </section>
 
   </main>
 
+  <!-- Custom Error Modal (Replaces alert) -->
+  <div id="messageModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-[#151b28] border border-slate-700 rounded-2xl max-w-md w-full p-5 shadow-2xl">
+      <div class="flex items-center gap-3 text-rose-400 mb-3">
+        <div class="w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center">
+          <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+        </div>
+        <h3 class="text-base font-bold text-white" id="modalTitle">Error de Micrófono</h3>
+      </div>
+      <p class="text-xs sm:text-sm text-slate-300 leading-relaxed mb-5" id="modalBody">
+        No se pudo acceder al micrófono. Por favor verifica los permisos del navegador.
+      </p>
+      <div class="flex justify-end">
+        <button id="closeModalBtn" class="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-xs sm:text-sm transition">
+          Entendido
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Footer Info -->
-  <footer class="border-t border-slate-800/80 py-2.5 px-4 text-center text-xs text-slate-500 bg-[#0e121a]">
-    Vocal Pitch Monitor &bull; Procesamiento de audio local mediante algoritmo YIN/Autocorrelación normalizada &bull; 100% privado en tu navegador
+  <footer class="border-t border-slate-800/80 py-2 px-3 text-center text-[11px] text-slate-500 bg-[#0e121a]">
+    Vocal Pitch Monitor &bull; Procesamiento de audio local mediante algoritmo YIN &bull; 100% privado
   </footer>
 
   <!-- Application Logic -->
   <script>
+    // PWA Fullscreen Manifest & Service Worker Setup for Chrome Installability
+    (function setupPWA() {
+      try {
+        const iconSvg = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%25' stop-color='%2306b6d4'/><stop offset='100%25' stop-color='%2310b981'/></linearGradient></defs><rect width='512' height='512' rx='112' fill='url(%23g)'/><path d='M256 112a56 56 0 0 0-56 56v96a56 56 0 0 0 112 0v-96a56 56 0 0 0-56-56zm-96 152a96 96 0 0 0 192 0h-24a72 72 0 0 1-144 0h-24zm84 119.2V416h24v-32.8A120 120 0 0 0 376 264h-24a96 96 0 0 1-192 0h-24a120 120 0 0 0 108 119.2z' fill='%230b0e14'/></svg>";
+        const manifestData = {
+          name: "VocalPitch Studio - Afinador Vocal",
+          short_name: "VocalPitch",
+          description: "Monitor de entonación y afinador vocal en tiempo real",
+          start_url: window.location.href,
+          scope: window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1),
+          display: "fullscreen",
+          orientation: "portrait",
+          background_color: "#0b0e14",
+          theme_color: "#0b0e14",
+          icons: [
+            { src: iconSvg, sizes: "192x192", type: "image/svg+xml", purpose: "any maskable" },
+            { src: iconSvg, sizes: "512x512", type: "image/svg+xml", purpose: "any maskable" }
+          ]
+        };
+        const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/manifest+json' });
+        const manifestEl = document.getElementById('pwaManifest');
+        if (manifestEl) {
+          manifestEl.href = URL.createObjectURL(manifestBlob);
+        }
+
+        if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+          const swCode = `
+            self.addEventListener('install', (e) => self.skipWaiting());
+            self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
+            self.addEventListener('fetch', (e) => {});
+          `;
+          const swBlob = new Blob([swCode], { type: 'application/javascript' });
+          navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+        }
+      } catch (e) {
+        console.warn("PWA setup skipped:", e);
+      }
+    })();
+
     // Musical Theory Constants
     const NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
-    const SCALE_INTERVALS = {
-      major: [0, 2, 4, 5, 7, 9, 11],
-      minor: [0, 2, 3, 5, 7, 8, 10],
-      pentatonic_maj: [0, 2, 4, 7, 9],
-      pentatonic_min: [0, 3, 5, 7, 10],
-      blues: [0, 3, 5, 6, 7, 10],
-      dorian: [0, 2, 3, 5, 7, 9, 10],
-      mixolydian: [0, 2, 4, 5, 7, 9, 10],
-      chromatic: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    const NOTE_NAMES_ES = ["Do", "Do#", "Re", "Re#", "Mi", "Fa", "Fa#", "Sol", "Sol#", "La", "La#", "Si"];
+
+    const SCALES = {
+      major: { name: "Mayor", intervals: [0, 2, 4, 5, 7, 9, 11] },
+      minor: { name: "Menor Natural", intervals: [0, 2, 3, 5, 7, 8, 10] },
+      pentatonic_maj: { name: "Pentatónica Mayor", intervals: [0, 2, 4, 7, 9] },
+      pentatonic_min: { name: "Pentatónica Menor", intervals: [0, 3, 5, 7, 10] },
+      blues: { name: "Blues", intervals: [0, 3, 5, 6, 7, 10] },
+      dorian: { name: "Dórica", intervals: [0, 2, 3, 5, 7, 9, 10] },
+      mixolydian: { name: "Mixolidia", intervals: [0, 2, 4, 5, 7, 9, 10] },
+      chromatic: { name: "Cromática", intervals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] }
     };
 
-    // Range definitions (MIDI values)
-    // E2 = 40, C6 = 84
-    const RANGE_PRESETS = {
+    const VOCAL_RANGES = {
       all: { minMidi: 40, maxMidi: 84, label: "E2 - C6" },
       soprano: { minMidi: 60, maxMidi: 81, label: "C4 - A5" },
       alto: { minMidi: 53, maxMidi: 77, label: "F3 - F5" },
@@ -350,33 +398,40 @@
       bass: { minMidi: 40, maxMidi: 64, label: "E2 - E4" }
     };
 
-    let currentMinMidi = 40; // E2 (approx 82.4 Hz)
-    let currentMaxMidi = 84; // C6 (approx 1046.5 Hz)
-
-    // App state
-    let isListening = false;
-    let audioContext = null;
+    // Application State
+    let audioCtx = null;
     let analyser = null;
-    let microphoneStream = null;
-    let buffer = null;
+    let mediaStream = null;
+    let isListening = false;
     let animationFrameId = null;
 
-    // Pitch detection tuning params
+    // Pitch Detection & Display Config
+    let rootKey = 0; // 0 = C
+    let currentScale = 'major';
+    let minMidi = 40; // E2
+    let maxMidi = 84; // C6
     let clarityThreshold = 0.88;
     let scrollSpeed = 2.5;
 
-    // History of pitch points for rendering
-    // Each point: { midiContinuous, noteIndex, cents, isInScale, clarity, timestamp, isValid }
+    // History buffer for scrolling graph
+    // Each item: { midi: float | null, cents: float, inScale: boolean, volume: float, x: float }
     let pitchHistory = [];
-    const MAX_HISTORY_POINTS = 1400;
+
+    // Smoothing filter for stability
+    let smoothedMidi = null;
 
     // DOM Elements
     const toggleMicBtn = document.getElementById('toggleMicBtn');
     const micIcon = document.getElementById('micIcon');
-    const micBtnText = document.getElementById('micBtnText');
+    const micTooltip = document.getElementById('micTooltip');
+    const installAppBtn = document.getElementById('installAppBtn');
     const clearBtn = document.getElementById('clearBtn');
     const liveDot = document.getElementById('liveDot');
     const signalStatusBadge = document.getElementById('signalStatusBadge');
+
+    const rootKeySelect = document.getElementById('rootKeySelect');
+    const scaleTypeSelect = document.getElementById('scaleTypeSelect');
+    const scaleNotesPills = document.getElementById('scaleNotesPills');
 
     const noteDisplay = document.getElementById('noteDisplay');
     const octaveDisplay = document.getElementById('octaveDisplay');
@@ -385,111 +440,72 @@
     const centsNumber = document.getElementById('centsNumber');
     const tuningFeedback = document.getElementById('tuningFeedback');
     const tunerPointer = document.getElementById('tunerPointer');
-    const volumeBar = document.getElementById('volumeBar');
 
-    const rootKeySelect = document.getElementById('rootKeySelect');
-    const scaleTypeSelect = document.getElementById('scaleTypeSelect');
-    const scaleNotesPills = document.getElementById('scaleNotesPills');
     const vocalRangePreset = document.getElementById('vocalRangePreset');
     const rangeLabel = document.getElementById('rangeLabel');
     const claritySlider = document.getElementById('claritySlider');
     const clarityThresholdVal = document.getElementById('clarityThresholdVal');
     const scrollSpeedSelect = document.getElementById('scrollSpeedSelect');
+    const speedLabel = document.getElementById('speedLabel');
+    const volumeBar = document.getElementById('volumeBar');
 
     const canvas = document.getElementById('pitchCanvas');
-    const ctx = canvas.getContext('2d', { alpha: false });
-    const pianoLabels = document.getElementById('pianoLabels');
-    const canvasContainer = document.getElementById('canvasContainer');
+    const ctx = canvas.getContext('2d');
+    const pianoLabelsContainer = document.getElementById('pianoLabels');
 
-    // Setup helper: Get scale notes set based on UI selections
-    function getScaleMidiClasses() {
-      const root = parseInt(rootKeySelect.value, 10);
-      const scaleKey = scaleTypeSelect.value;
-      const intervals = SCALE_INTERVALS[scaleKey] || SCALE_INTERVALS.major;
-      return new Set(intervals.map(i => (root + i) % 12));
-    }
-
-    // Refresh Pill badges for notes in scale
-    function updateScalePills() {
-      const root = parseInt(rootKeySelect.value, 10);
-      const scaleKey = scaleTypeSelect.value;
-      const intervals = SCALE_INTERVALS[scaleKey] || SCALE_INTERVALS.major;
-      scaleNotesPills.innerHTML = '';
-
-      intervals.forEach((interval, idx) => {
-        const noteIdx = (root + interval) % 12;
-        const noteName = NOTE_NAMES[noteIdx];
-        const isRoot = idx === 0;
-
-        const pill = document.createElement('span');
-        pill.className = `px-2 py-0.5 rounded text-xs font-mono-code font-bold transition-all ${
-          isRoot 
-            ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-sm shadow-cyan-500/20' 
-            : 'bg-slate-800 text-slate-300 border border-slate-700/60'
-        }`;
-        pill.textContent = noteName;
-        scaleNotesPills.appendChild(pill);
-      });
-      renderPianoRollLabels();
-    }
-
-    // Convert MIDI number to Note Name and Octave
-    function midiToNoteDetails(midi) {
-      const roundedMidi = Math.round(midi);
-      const noteIndex = ((roundedMidi % 12) + 12) % 12;
-      const octave = Math.floor(roundedMidi / 12) - 1;
-      const noteName = NOTE_NAMES[noteIndex];
-      const cents = Math.round((midi - roundedMidi) * 100);
-      return { noteIndex, noteName, octave, cents, roundedMidi };
-    }
-
-    // Convert Frequency in Hz to MIDI floating value
-    function freqToMidi(freq) {
-      return 69 + 12 * Math.log2(freq / 440);
-    }
-
-    // Convert MIDI to Frequency
-    function midiToFreq(midi) {
-      return 440 * Math.pow(2, (midi - 69) / 12);
-    }
+    const messageModal = document.getElementById('messageModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    const closeModalBtn = document.getElementById('closeModalBtn');
 
     /* =========================================================================
-       HIGH-PRECISION YIN PITCH DETECTION ALGORITHM
-       Designed for low-latency & high accuracy in human voice fundamental detection
+       YIN PITCH DETECTION ALGORITHM
        ========================================================================= */
-    function detectPitchYIN(buffer, sampleRate, threshold = 0.15) {
+    function detectPitchYIN(buffer, sampleRate) {
       const bufferSize = buffer.length;
-      const halfSize = Math.floor(bufferSize / 2);
-      const yinBuffer = new Float32Array(halfSize);
+      const halfBufferSize = Math.floor(bufferSize / 2);
 
-      // Step 1: Difference Function
-      for (let tau = 0; tau < halfSize; tau++) {
-        yinBuffer[tau] = 0;
+      // Compute RMS volume first to avoid processing pure silence
+      let rms = 0;
+      for (let i = 0; i < bufferSize; i++) {
+        rms += buffer[i] * buffer[i];
       }
-      for (let tau = 1; tau < halfSize; tau++) {
-        for (let j = 0; j < halfSize; j++) {
-          const delta = buffer[j] - buffer[j + tau];
-          yinBuffer[tau] += delta * delta;
+      rms = Math.sqrt(rms / bufferSize);
+      if (rms < 0.012) {
+        return { frequency: null, clarity: 0, volume: rms };
+      }
+
+      const yinBuffer = new Float32Array(halfBufferSize);
+
+      // Step 1: Difference function
+      for (let tau = 0; tau < halfBufferSize; tau++) {
+        let sum = 0;
+        for (let i = 0; i < halfBufferSize; i++) {
+          const delta = buffer[i] - buffer[i + tau];
+          sum += delta * delta;
         }
+        yinBuffer[tau] = sum;
       }
 
-      // Step 2: Cumulative Mean Normalized Difference
+      // Step 2: Cumulative mean normalized difference function
       yinBuffer[0] = 1;
       let runningSum = 0;
-      for (let tau = 1; tau < halfSize; tau++) {
+      for (let tau = 1; tau < halfBufferSize; tau++) {
         runningSum += yinBuffer[tau];
-        if (runningSum === 0) {
-          yinBuffer[tau] = 1;
-        } else {
-          yinBuffer[tau] *= tau / runningSum;
-        }
+        yinBuffer[tau] *= tau / runningSum;
       }
 
-      // Step 3: Absolute Thresholding
+      // Step 3: Absolute threshold
+      // Limit tau search to human vocal range (~65 Hz to ~1200 Hz)
+      const minTau = Math.floor(sampleRate / 1200);
+      const maxTau = Math.min(halfBufferSize - 1, Math.floor(sampleRate / 65));
+
       let tauEstimate = -1;
-      for (let tau = 2; tau < halfSize; tau++) {
+      const threshold = 1 - clarityThreshold;
+
+      for (let tau = minTau; tau < maxTau; tau++) {
         if (yinBuffer[tau] < threshold) {
-          while (tau + 1 < halfSize && yinBuffer[tau + 1] < yinBuffer[tau]) {
+          while (tau + 1 < maxTau && yinBuffer[tau + 1] < yinBuffer[tau]) {
             tau++;
           }
           tauEstimate = tau;
@@ -497,44 +513,128 @@
         }
       }
 
-      // If no minimum below threshold, find global minimum
       if (tauEstimate === -1) {
-        let minVal = 100;
-        for (let tau = 2; tau < halfSize; tau++) {
-          if (yinBuffer[tau] < minVal) {
-            minVal = yinBuffer[tau];
-            tauEstimate = tau;
-          }
-        }
-        if (minVal > (1 - clarityThreshold)) {
-          return { freq: -1, clarity: 1 - minVal };
-        }
+        return { frequency: null, clarity: 0, volume: rms };
       }
 
-      // Step 4: Parabolic Interpolation for sub-sample accuracy
-      let betterTau;
-      const x0 = tauEstimate < 1 ? tauEstimate : tauEstimate - 1;
-      const x2 = tauEstimate + 1 < halfSize ? tauEstimate + 1 : tauEstimate;
-
-      if (x0 === tauEstimate) {
-        betterTau = (yinBuffer[tauEstimate] <= yinBuffer[x2]) ? tauEstimate : x2;
-      } else if (x2 === tauEstimate) {
-        betterTau = (yinBuffer[tauEstimate] <= yinBuffer[x0]) ? tauEstimate : x0;
-      } else {
-        const s0 = yinBuffer[x0];
+      // Step 4: Parabolic interpolation for sub-sample precision
+      let betterTau = tauEstimate;
+      if (tauEstimate > 0 && tauEstimate < halfBufferSize - 1) {
+        const s0 = yinBuffer[tauEstimate - 1];
         const s1 = yinBuffer[tauEstimate];
-        const s2 = yinBuffer[x2];
-        const denom = (2 * (2 * s1 - s2 - s0));
-        betterTau = denom !== 0 ? tauEstimate + (s2 - s0) / denom : tauEstimate;
+        const s2 = yinBuffer[tauEstimate + 1];
+        const adjustment = (s2 - s0) / (2 * (2 * s1 - s2 - s0));
+        if (!isNaN(adjustment) && isFinite(adjustment)) {
+          betterTau += adjustment;
+        }
       }
 
       const frequency = sampleRate / betterTau;
       const clarity = 1 - yinBuffer[tauEstimate];
 
-      return { freq: frequency, clarity: clarity };
+      return { frequency, clarity, volume: rms };
     }
 
-    // Audio Input Start/Stop Handling
+    /* =========================================================================
+       MUSIC THEORY & CONVERSIONS
+       ========================================================================= */
+    function freqToMidiFloat(freq) {
+      return 69 + 12 * Math.log2(freq / 440);
+    }
+
+    function getScaleNotesSet() {
+      const intervals = SCALES[currentScale].intervals;
+      const set = new Set();
+      intervals.forEach(interval => {
+        set.add((rootKey + interval) % 12);
+      });
+      return set;
+    }
+
+    function isMidiNoteInScale(midiInteger) {
+      const noteIndex = ((midiInteger % 12) + 12) % 12;
+      return getScaleNotesSet().has(noteIndex);
+    }
+
+    function midiToNoteInfo(midiFloat) {
+      const nearestMidi = Math.round(midiFloat);
+      const cents = Math.round((midiFloat - nearestMidi) * 100);
+      const noteIndex = ((nearestMidi % 12) + 12) % 12;
+      const octave = Math.floor(nearestMidi / 12) - 1;
+      return {
+        midiFloat,
+        nearestMidi,
+        cents,
+        noteName: NOTE_NAMES[noteIndex],
+        noteNameEs: NOTE_NAMES_ES[noteIndex],
+        octave,
+        inScale: isMidiNoteInScale(nearestMidi)
+      };
+    }
+
+    /* =========================================================================
+       UI & SCALE PILLS RENDERING
+       ========================================================================= */
+    function renderScalePills() {
+      const scaleSet = getScaleNotesSet();
+      scaleNotesPills.innerHTML = '';
+
+      for (let i = 0; i < 12; i++) {
+        const noteIdx = (rootKey + i) % 12;
+        if (scaleSet.has(noteIdx)) {
+          const isRoot = (noteIdx === rootKey);
+          const pill = document.createElement('span');
+          pill.className = isRoot
+            ? 'px-2 py-0.5 rounded-md text-[11px] font-bold font-mono-code bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-sm'
+            : 'px-2 py-0.5 rounded-md text-[11px] font-medium font-mono-code bg-slate-800/90 text-slate-300 border border-slate-700';
+          pill.textContent = NOTE_NAMES[noteIdx];
+          scaleNotesPills.appendChild(pill);
+        }
+      }
+    }
+
+    function buildPianoLabels() {
+      pianoLabelsContainer.innerHTML = '';
+      const scaleSet = getScaleNotesSet();
+      const totalSemitones = maxMidi - minMidi;
+
+      for (let midi = minMidi; midi <= maxMidi; midi++) {
+        const noteIdx = midi % 12;
+        const octave = Math.floor(midi / 12) - 1;
+        const noteName = NOTE_NAMES[noteIdx];
+        const isBlackKey = noteName.includes('#');
+        const inScale = scaleSet.has(noteIdx);
+        const isRoot = (noteIdx === rootKey);
+
+        // Calculate vertical percentage from top (maxMidi at 0%, minMidi at 100%)
+        const ratioFromTop = (maxMidi - midi) / totalSemitones;
+        const topPercent = ratioFromTop * 100;
+
+        // Only display label if range is reasonable or if it's a natural/scale note
+        if (totalSemitones > 32 && isBlackKey && !inScale) continue;
+
+        const labelEl = document.createElement('div');
+        labelEl.style.top = `${topPercent}%`;
+        labelEl.className = `absolute left-0 right-0 -translate-y-1/2 px-1.5 flex items-center justify-between text-[10px] font-mono-code leading-none pointer-events-none ${
+          isRoot
+            ? 'text-cyan-300 font-extrabold'
+            : inScale
+              ? 'text-slate-200 font-semibold'
+              : 'text-slate-600'
+        }`;
+
+        const badgeDot = inScale
+          ? `<span class="w-1.5 h-1.5 rounded-full ${isRoot ? 'bg-cyan-400' : 'bg-emerald-400/70'}"></span>`
+          : `<span></span>`;
+
+        labelEl.innerHTML = `${badgeDot}<span>${noteName}${octave}</span>`;
+        pianoLabelsContainer.appendChild(labelEl);
+      }
+    }
+
+    /* =========================================================================
+       AUDIO CAPTURE & PROCESSING
+       ========================================================================= */
     async function toggleMicrophone() {
       if (isListening) {
         stopMicrophone();
@@ -545,52 +645,52 @@
 
     async function startMicrophone() {
       try {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        audioContext = new AudioCtx({ latencyHint: 'interactive' });
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          showErrorModal("Navegador Incompatible", "Tu navegador no soporta la captura de audio mediante micrófono (Web Audio API).");
+          return;
+        }
 
-        const stream = await navigator.mediaDevices.getUserMedia({
+        mediaStream = await navigator.mediaDevices.getUserMedia({
           audio: {
             echoCancellation: false,
-            autoGainControl: false,
-            noiseSuppression: false
+            noiseSuppression: false,
+            autoGainControl: false
           }
         });
 
-        microphoneStream = stream;
-        const source = audioContext.createMediaStreamSource(stream);
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') {
+          await audioCtx.resume();
+        }
 
-        // Analyser node setup
-        analyser = audioContext.createAnalyser();
-        analyser.fftSize = 2048; // Good balance for vocal range (40Hz - 1200Hz)
-        buffer = new Float32Array(analyser.fftSize);
-
-        // Optional low-pass / bandpass filter to tame high-frequency mic noise
-        const bandpass = audioContext.createBiquadFilter();
-        bandpass.type = "bandpass";
-        bandpass.frequency.value = 500;
-        bandpass.Q.value = 0.5;
-
-        source.connect(bandpass);
-        bandpass.connect(analyser);
+        const source = audioCtx.createMediaStreamSource(mediaStream);
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 2048;
+        source.connect(analyser);
 
         isListening = true;
         updateUIOnStateChange(true);
-        requestAnimationFrame(processAudioLoop);
       } catch (err) {
-        console.error("No se pudo acceder al micrófono:", err);
-        showMessageModal("Error de Micrófono", "No se pudo acceder a tu micrófono. Asegúrate de otorgar los permisos necesarios en el navegador.");
+        console.error("Microphone error:", err);
+        showErrorModal(
+          "Error de Micrófono",
+          "No se pudo acceder a tu micrófono. Asegúrate de otorgar los permisos necesarios en el navegador y de que ningún otro programa lo esté bloqueando."
+        );
       }
     }
 
     function stopMicrophone() {
       isListening = false;
-      if (microphoneStream) {
-        microphoneStream.getTracks().forEach(track => track.stop());
-        microphoneStream = null;
+      if (mediaStream) {
+        mediaStream.getTracks().forEach(track => track.stop());
+        mediaStream = null;
       }
-      if (audioContext && audioContext.state !== 'closed') {
-        audioContext.close();
+      if (audioCtx) {
+        audioCtx.close().catch(() => {});
+        audioCtx = null;
       }
+      analyser = null;
+      smoothedMidi = null;
       updateUIOnStateChange(false);
       resetDashboardToIdle();
     }
@@ -599,407 +699,382 @@
       if (active) {
         toggleMicBtn.classList.remove('from-cyan-500', 'to-emerald-500', 'text-slate-950');
         toggleMicBtn.classList.add('from-rose-500', 'to-red-600', 'text-white', 'shadow-rose-500/20');
-        micBtnText.textContent = "Detener Escucha";
+        toggleMicBtn.setAttribute('aria-label', 'Detener Escucha');
+        if (micTooltip) micTooltip.textContent = "Detener Escucha";
         micIcon.className = "fa-solid fa-stop text-sm";
         liveDot.style.display = "inline-block";
         signalStatusBadge.textContent = "Micrófono Activo";
-        signalStatusBadge.className = "text-[11px] font-mono-code px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-800/80";
+        signalStatusBadge.className = "text-[10px] font-mono-code px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-800/80";
       } else {
         toggleMicBtn.classList.add('from-cyan-500', 'to-emerald-500', 'text-slate-950');
         toggleMicBtn.classList.remove('from-rose-500', 'to-red-600', 'text-white', 'shadow-rose-500/20');
-        micBtnText.textContent = "Activar Micrófono";
+        toggleMicBtn.setAttribute('aria-label', 'Activar Micrófono');
+        if (micTooltip) micTooltip.textContent = "Activar Micrófono";
         micIcon.className = "fa-solid fa-microphone text-sm";
         liveDot.style.display = "none";
         signalStatusBadge.textContent = "Silencio / En espera";
-        signalStatusBadge.className = "text-[11px] font-mono-code px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700/60";
+        signalStatusBadge.className = "text-[10px] font-mono-code px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700/60";
         volumeBar.style.width = '0%';
       }
     }
 
     function resetDashboardToIdle() {
       noteDisplay.textContent = "--";
-      noteDisplay.className = "text-5xl sm:text-6xl font-extrabold font-mono-code text-slate-500";
+      noteDisplay.className = "text-3xl sm:text-4xl font-extrabold font-mono-code text-slate-500";
       octaveDisplay.textContent = "Octava: -";
       hzDisplay.textContent = "0.0 Hz";
       centsNumber.textContent = "0";
-      centsNumber.className = "text-xl font-extrabold font-mono-code text-slate-300";
+      centsNumber.className = "text-base sm:text-lg font-extrabold font-mono-code text-slate-300";
       tuningFeedback.textContent = "Neutro";
-      tuningFeedback.className = "ml-auto text-xs font-semibold text-slate-400";
+      tuningFeedback.className = "ml-auto text-[11px] font-semibold text-slate-400 truncate";
       scaleAffinity.innerHTML = '<i class="fa-solid fa-circle-question text-xs"></i> <span>En espera</span>';
-      scaleAffinity.className = "text-sm font-semibold text-slate-400 flex items-center gap-1.5";
+      scaleAffinity.className = "text-xs sm:text-sm font-semibold text-slate-400 flex items-center gap-1.5 mt-0.5";
       tunerPointer.style.left = "50%";
       tunerPointer.className = "absolute top-1 bottom-1 w-2 rounded-full bg-slate-500 -translate-x-1/2 transition-all duration-75 shadow-md";
     }
 
-    // Modal alternative to alert()
-    function showMessageModal(title, text) {
-      const modal = document.createElement('div');
-      modal.className = "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in";
-      modal.innerHTML = `
-        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-sm w-full p-5 shadow-2xl text-center">
-          <div class="w-12 h-12 mx-auto rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center text-xl mb-3 border border-amber-500/30">
-            <i class="fa-solid fa-triangle-exclamation"></i>
-          </div>
-          <h3 class="text-base font-bold text-white mb-2">${title}</h3>
-          <p class="text-xs text-slate-300 leading-relaxed mb-4">${text}</p>
-          <button id="closeModalBtn" class="w-full py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition">
-            Entendido
-          </button>
-        </div>
-      `;
-      document.body.appendChild(modal);
-      modal.querySelector('#closeModalBtn').addEventListener('click', () => {
-        modal.remove();
-      });
+    function showErrorModal(title, message) {
+      modalTitle.textContent = title;
+      modalBody.textContent = message;
+      messageModal.classList.remove('hidden');
+      messageModal.classList.add('flex');
     }
 
     /* =========================================================================
-       AUDIO PROCESSING & REAL-TIME ESTIMATION
-       ========================================================================= */
-    function processAudioLoop() {
-      if (!isListening) return;
-
-      analyser.getFloatTimeDomainData(buffer);
-
-      // 1. Calculate RMS Volume
-      let sumSq = 0;
-      for (let i = 0; i < buffer.length; i++) {
-        sumSq += buffer[i] * buffer[i];
-      }
-      const rms = Math.sqrt(sumSq / buffer.length);
-      const volumePct = Math.min(100, Math.round(rms * 450));
-      volumeBar.style.width = `${volumePct}%`;
-
-      // Silence gating
-      const isVoiceDetected = rms > 0.012;
-      let pitchData = { freq: -1, clarity: 0 };
-
-      if (isVoiceDetected) {
-        pitchData = detectPitchYIN(buffer, audioContext.sampleRate, 0.15);
-      }
-
-      const scaleClasses = getScaleMidiClasses();
-      const now = performance.now();
-
-      // Check valid vocal range
-      if (pitchData.freq > 50 && pitchData.freq < 1500 && pitchData.clarity >= clarityThreshold) {
-        const midiExact = freqToMidi(pitchData.freq);
-        const { noteIndex, noteName, octave, cents, roundedMidi } = midiToNoteDetails(midiExact);
-        const isInScale = scaleClasses.has(noteIndex);
-
-        // Push valid point into history
-        pitchHistory.push({
-          isValid: true,
-          midi: midiExact,
-          roundedMidi: roundedMidi,
-          noteName: noteName,
-          octave: octave,
-          cents: cents,
-          isInScale: isInScale,
-          time: now
-        });
-
-        // Update Dashboard Live Controls
-        updateLiveDashboard({
-          noteName,
-          octave,
-          freq: pitchData.freq,
-          cents,
-          isInScale
-        });
-
-      } else {
-        // Voice unvoiced / silence point
-        pitchHistory.push({
-          isValid: false,
-          time: now
-        });
-
-        if (!isVoiceDetected) {
-          signalStatusBadge.textContent = "Silencio";
-          signalStatusBadge.className = "text-[11px] font-mono-code px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700/60";
-        } else {
-          signalStatusBadge.textContent = "Voz poco clara";
-          signalStatusBadge.className = "text-[11px] font-mono-code px-2 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-800/60";
-        }
-      }
-
-      // Trim history queue
-      if (pitchHistory.length > MAX_HISTORY_POINTS) {
-        pitchHistory.splice(0, pitchHistory.length - MAX_HISTORY_POINTS);
-      }
-
-      // Draw scrolling graph
-      drawContinuousPitchCanvas(scaleClasses);
-
-      animationFrameId = requestAnimationFrame(processAudioLoop);
-    }
-
-    // Update Top DAW Tuner UI Values
-    function updateLiveDashboard({ noteName, octave, freq, cents, isInScale }) {
-      noteDisplay.textContent = noteName;
-      octaveDisplay.textContent = `Octava: ${octave}`;
-      hzDisplay.textContent = `${freq.toFixed(1)} Hz`;
-
-      const absCents = Math.abs(cents);
-      centsNumber.textContent = (cents > 0 ? `+${cents}` : cents);
-
-      // Color coding based on tuning accuracy and scale presence
-      let tunerColorClass = "text-rose-400";
-      let needleBg = "bg-rose-500 shadow-rose-500/50";
-      let feedbackText = cents > 0 ? "Sostenido (Alto)" : "Bemol (Bajo)";
-
-      if (absCents <= 15) {
-        tunerColorClass = "text-emerald-400";
-        needleBg = "bg-emerald-400 shadow-emerald-400/80";
-        feedbackText = "Perfecto";
-      } else if (absCents <= 30) {
-        tunerColorClass = "text-amber-400";
-        needleBg = "bg-amber-400 shadow-amber-400/50";
-        feedbackText = cents > 0 ? "Algo Alto" : "Algo Bajo";
-      }
-
-      noteDisplay.className = `text-5xl sm:text-6xl font-extrabold font-mono-code ${tunerColorClass} text-glow`;
-      centsNumber.className = `text-xl font-extrabold font-mono-code ${tunerColorClass}`;
-      tuningFeedback.textContent = feedbackText;
-      tuningFeedback.className = `ml-auto text-xs font-semibold ${tunerColorClass}`;
-
-      // Needle position: -50 cents = 0%, 0 cents = 50%, +50 cents = 100%
-      const clampedCents = Math.max(-50, Math.min(50, cents));
-      const needlePercent = ((clampedCents + 50) / 100) * 100;
-      tunerPointer.style.left = `${needlePercent}%`;
-      tunerPointer.className = `absolute top-1 bottom-1 w-2 rounded-full ${needleBg} -translate-x-1/2 transition-all duration-75 shadow-md`;
-
-      // Scale Affinity feedback
-      if (isInScale) {
-        scaleAffinity.innerHTML = '<i class="fa-solid fa-check text-emerald-400 text-xs"></i> <span class="text-emerald-300 font-bold">En Escala</span>';
-      } else {
-        scaleAffinity.innerHTML = '<i class="fa-solid fa-circle-xmark text-rose-400 text-xs"></i> <span class="text-rose-400 font-medium">Fuera de Escala</span>';
-      }
-    }
-
-    /* =========================================================================
-       CANVAS RENDERING: CONTINUOUS PIANO ROLL & PITCH CURVE
+       CANVAS RESIZE & RENDERING LOOP
        ========================================================================= */
     function resizeCanvas() {
-      const rect = canvas.getBoundingClientRect();
+      const rect = canvas.parentElement.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
-      
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
-      ctx.resetTransform();
-      ctx.scale(dpr, dpr);
-
-      renderPianoRollLabels();
-      drawContinuousPitchCanvas(getScaleMidiClasses());
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
-    // Convert MIDI pitch to Canvas Y coordinate
-    function midiToY(midi, height) {
-      const range = currentMaxMidi - currentMinMidi;
-      const normalized = (midi - currentMinMidi) / range;
-      // Invert Y so higher pitches are at top
-      return height - (normalized * height);
+    function midiToY(midiVal, height) {
+      const paddingY = 18;
+      const usableHeight = height - paddingY * 2;
+      const normalized = (midiVal - minMidi) / (maxMidi - minMidi);
+      return height - paddingY - normalized * usableHeight;
     }
 
-    // Render piano roll left gutter labels
-    function renderPianoRollLabels() {
-      pianoLabels.innerHTML = '';
-      const height = canvas.clientHeight;
-      if (!height) return;
+    function drawBackgroundGrid(width, height) {
+      const scaleSet = getScaleNotesSet();
 
-      const scaleClasses = getScaleMidiClasses();
+      for (let midi = minMidi; midi <= maxMidi; midi++) {
+        const y = midiToY(midi, height);
+        const noteIdx = midi % 12;
+        const inScale = scaleSet.has(noteIdx);
+        const isRoot = (noteIdx === rootKey);
 
-      for (let m = currentMinMidi; m <= currentMaxMidi; m++) {
-        const noteIdx = ((m % 12) + 12) % 12;
-        const octave = Math.floor(m / 12) - 1;
-        const isSharp = NOTE_NAMES[noteIdx].includes('#');
-        const isInScale = scaleClasses.has(noteIdx);
-        const y = midiToY(m, height);
-
-        // Only draw visible notes with reasonable density
-        const label = document.createElement('div');
-        label.className = `absolute left-0 right-0 -translate-y-1/2 flex items-center justify-between px-1.5 text-[10px] font-mono-code transition-colors ${
-          isInScale 
-            ? 'text-cyan-300 font-bold bg-cyan-950/30' 
-            : isSharp ? 'text-slate-500' : 'text-slate-400'
-        }`;
-        label.style.top = `${y}px`;
-
-        const nameSpan = document.createElement('span');
-        nameSpan.textContent = `${NOTE_NAMES[noteIdx]}${octave}`;
-        label.appendChild(nameSpan);
-
-        if (isInScale) {
-          const dot = document.createElement('span');
-          dot.className = "w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-sm shadow-cyan-400/80";
-          label.appendChild(dot);
+        // Subtle horizontal band for notes belonging to the selected scale
+        if (inScale) {
+          const bandHeight = (height - 36) / (maxMidi - minMidi);
+          ctx.fillStyle = isRoot ? 'rgba(6, 182, 212, 0.09)' : 'rgba(16, 185, 129, 0.045)';
+          ctx.fillRect(0, y - bandHeight / 2, width, bandHeight);
         }
 
-        pianoLabels.appendChild(label);
-      }
-    }
-
-    // Draw the continuous scrolling graph
-    function drawContinuousPitchCanvas(scaleClasses) {
-      const width = canvas.clientWidth;
-      const height = canvas.clientHeight;
-      if (!width || !height) return;
-
-      // 1. Clear background
-      ctx.fillStyle = '#080c14';
-      ctx.fillRect(0, 0, width, height);
-
-      // 2. Draw Horizontal Musical Note Guideline Lanes
-      for (let m = currentMinMidi; m <= currentMaxMidi; m++) {
-        const noteIdx = ((m % 12) + 12) % 12;
-        const isInScale = scaleClasses.has(noteIdx);
-        const isRoot = (m % 12) === parseInt(rootKeySelect.value, 10);
-        const y = midiToY(m, height);
-
-        // Note background strip for scale notes
-        if (isInScale) {
-          ctx.fillStyle = isRoot ? 'rgba(6, 182, 212, 0.08)' : 'rgba(16, 185, 129, 0.035)';
-          const nextY = midiToY(m + 0.5, height);
-          const prevY = midiToY(m - 0.5, height);
-          ctx.fillRect(0, nextY, width, prevY - nextY);
-        }
-
-        // Horizontal Line
+        // Horizontal guideline
         ctx.beginPath();
-        if (isRoot) {
-          ctx.strokeStyle = 'rgba(6, 182, 212, 0.65)';
-          ctx.lineWidth = 1.4;
-          ctx.setLineDash([]);
-        } else if (isInScale) {
-          ctx.strokeStyle = 'rgba(45, 212, 191, 0.28)';
-          ctx.lineWidth = 1.0;
-          ctx.setLineDash([4, 4]);
-        } else {
-          ctx.strokeStyle = 'rgba(51, 65, 85, 0.18)';
-          ctx.lineWidth = 0.6;
-          ctx.setLineDash([2, 6]);
-        }
-
         ctx.moveTo(0, y);
         ctx.lineTo(width, y);
+
+        if (isRoot) {
+          ctx.strokeStyle = 'rgba(34, 211, 238, 0.45)';
+          ctx.lineWidth = 1.4;
+          ctx.setLineDash([]);
+        } else if (inScale) {
+          ctx.strokeStyle = 'rgba(52, 211, 153, 0.22)';
+          ctx.lineWidth = 1;
+          ctx.setLineDash([]);
+        } else {
+          ctx.strokeStyle = 'rgba(51, 65, 85, 0.25)';
+          ctx.lineWidth = 0.7;
+          ctx.setLineDash([3, 4]);
+        }
         ctx.stroke();
-        ctx.setLineDash([]);
+      }
+      ctx.setLineDash([]);
+    }
+
+    function getColorForPitch(cents, inScale) {
+      const absCents = Math.abs(cents);
+      if (!inScale) {
+        return { stroke: '#f43f5e', glow: 'rgba(244, 63, 94, 0.55)' }; // Rose/Red: Out of scale
+      }
+      if (absCents <= 15) {
+        return { stroke: '#10b981', glow: 'rgba(16, 185, 129, 0.65)' }; // Emerald: Spot on
+      }
+      if (absCents <= 30) {
+        return { stroke: '#f59e0b', glow: 'rgba(245, 158, 11, 0.55)' }; // Amber: Slightly off
+      }
+      return { stroke: '#f43f5e', glow: 'rgba(244, 63, 94, 0.55)' }; // Rose: Sharp/Flat
+    }
+
+    function updateTunerDashboard(noteInfo, freq) {
+      noteDisplay.textContent = noteInfo.noteName;
+      octaveDisplay.textContent = `Octava: ${noteInfo.octave}`;
+      hzDisplay.textContent = `${freq.toFixed(1)} Hz`;
+
+      const absCents = Math.abs(noteInfo.cents);
+      const sign = noteInfo.cents > 0 ? '+' : '';
+      centsNumber.textContent = `${sign}${noteInfo.cents}`;
+
+      // Update Scale Affinity Pill
+      if (noteInfo.inScale) {
+        scaleAffinity.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> <span class="text-emerald-300">Sí (${noteInfo.noteNameEs})</span>`;
+      } else {
+        scaleAffinity.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-400"></i> <span class="text-rose-300">Fuera de escala</span>`;
       }
 
-      // 3. Draw Pitch Trail / Continuous Curve
-      if (pitchHistory.length < 2) return;
+      // Color & Feedback Text
+      let tunerColorClass = 'text-emerald-400';
+      let pointerBgClass = 'bg-emerald-400 shadow-emerald-400/60';
+      let feedbackText = 'Afinado';
 
-      const liveX = width - 48; // The "Live" vertical line location
-      const step = scrollSpeed;
+      if (!noteInfo.inScale) {
+        tunerColorClass = 'text-rose-400';
+        pointerBgClass = 'bg-rose-500 shadow-rose-500/60';
+        feedbackText = 'Nota ajena';
+      } else if (absCents <= 15) {
+        tunerColorClass = 'text-emerald-400';
+        pointerBgClass = 'bg-emerald-400 shadow-emerald-400/60';
+        feedbackText = 'Perfecto';
+      } else if (absCents <= 30) {
+        tunerColorClass = 'text-amber-400';
+        pointerBgClass = 'bg-amber-400 shadow-amber-400/60';
+        feedbackText = noteInfo.cents > 0 ? 'Un poco alto' : 'Un poco bajo';
+      } else {
+        tunerColorClass = 'text-rose-400';
+        pointerBgClass = 'bg-rose-500 shadow-rose-500/60';
+        feedbackText = noteInfo.cents > 0 ? 'Muy alto (#)' : 'Muy bajo (b)';
+      }
 
-      // Draw continuous colored curve segments
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
+      noteDisplay.className = `text-3xl sm:text-4xl font-extrabold font-mono-code ${tunerColorClass} text-glow`;
+      centsNumber.className = `text-base sm:text-lg font-extrabold font-mono-code ${tunerColorClass}`;
+      tuningFeedback.textContent = feedbackText;
+      tuningFeedback.className = `ml-auto text-[11px] font-semibold ${tunerColorClass} truncate`;
 
-      let segStartIndex = -1;
+      // Move Needle (-50 cents = 5%, 0 cents = 50%, +50 cents = 95%)
+      const clampedCents = Math.max(-50, Math.min(50, noteInfo.cents));
+      const percent = 50 + (clampedCents / 50) * 45;
+      tunerPointer.style.left = `${percent}%`;
+      tunerPointer.className = `absolute top-1 bottom-1 w-2 rounded-full -translate-x-1/2 transition-all duration-75 shadow-md ${pointerBgClass}`;
+    }
 
-      for (let i = 0; i < pitchHistory.length - 1; i++) {
-        const p1 = pitchHistory[i];
-        const p2 = pitchHistory[i + 1];
+    function mainLoop() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const width = rect.width;
+      const height = rect.height;
 
-        const x1 = liveX - (pitchHistory.length - 1 - i) * step;
-        const x2 = liveX - (pitchHistory.length - 1 - (i + 1)) * step;
+      // Clear background
+      ctx.fillStyle = '#090c12';
+      ctx.fillRect(0, 0, width, height);
 
-        // Skip points outside screen bounds
-        if (x2 < 0) continue;
+      // Draw Piano Roll & Scale Grid
+      drawBackgroundGrid(width, height);
 
-        if (p1.isValid && p2.isValid) {
-          const y1 = midiToY(p1.midi, height);
-          const y2 = midiToY(p2.midi, height);
+      // Process Audio Frame if active
+      let currentSample = { midi: null, cents: 0, inScale: false };
 
-          // Determine stroke color based on deviation and scale
-          const absCents = Math.abs(p2.cents);
-          let strokeStyle = '#f43f5e'; // Desafinado / Rose red
-          let glowColor = 'rgba(244, 63, 94, 0.4)';
+      if (isListening && analyser && audioCtx) {
+        const buffer = new Float32Array(analyser.fftSize);
+        analyser.getFloatTimeDomainData(buffer);
 
-          if (absCents <= 15 && p2.isInScale) {
-            strokeStyle = '#10b981'; // In scale & very well tuned / Emerald green
-            glowColor = 'rgba(16, 185, 129, 0.6)';
-          } else if (absCents <= 15) {
-            strokeStyle = '#22d3ee'; // Tuned to a note, but out of scale / Cyan
-            glowColor = 'rgba(34, 211, 238, 0.5)';
-          } else if (absCents <= 30) {
-            strokeStyle = '#fbbf24'; // Close to in-tune / Amber
-            glowColor = 'rgba(251, 191, 36, 0.4)';
+        const result = detectPitchYIN(buffer, audioCtx.sampleRate);
+
+        // Update volume bar visually
+        const volPercent = Math.min(100, Math.round(result.volume * 380));
+        volumeBar.style.width = `${volPercent}%`;
+
+        if (result.frequency && result.clarity >= clarityThreshold) {
+          const rawMidi = freqToMidiFloat(result.frequency);
+
+          // Smooth jitter slightly while preserving vibrato
+          if (smoothedMidi === null || Math.abs(rawMidi - smoothedMidi) > 1.5) {
+            smoothedMidi = rawMidi;
+          } else {
+            smoothedMidi = smoothedMidi * 0.45 + rawMidi * 0.55;
           }
 
-          // Subtle Glow layer
-          ctx.beginPath();
-          ctx.strokeStyle = glowColor;
-          ctx.lineWidth = 6;
-          ctx.moveTo(x1, y1);
-          ctx.lineTo(x2, y2);
-          ctx.stroke();
+          const noteInfo = midiToNoteInfo(smoothedMidi);
+          currentSample = {
+            midi: smoothedMidi,
+            cents: noteInfo.cents,
+            inScale: noteInfo.inScale
+          };
 
-          // Sharp Core line
-          ctx.beginPath();
-          ctx.strokeStyle = strokeStyle;
-          ctx.lineWidth = 3;
-          ctx.moveTo(x1, y1);
-          ctx.lineTo(x2, y2);
-          ctx.stroke();
-
-          // Target note snap hint (subtle dot at rounded integer note)
-          if (i % 8 === 0) {
-            const targetY = midiToY(p2.roundedMidi, height);
-            ctx.fillStyle = p2.isInScale ? 'rgba(34, 211, 238, 0.35)' : 'rgba(148, 163, 184, 0.2)';
-            ctx.beginPath();
-            ctx.arc(x2, targetY, 2, 0, Math.PI * 2);
-            ctx.fill();
-          }
+          signalStatusBadge.textContent = `Voz detectada (${Math.round(result.clarity * 100)}%)`;
+          updateTunerDashboard(noteInfo, result.frequency);
+        } else {
+          smoothedMidi = null;
+          signalStatusBadge.textContent = "Escuchando (Silencio)...";
         }
       }
 
-      // Draw current live point head
-      const latestPoint = pitchHistory[pitchHistory.length - 1];
-      if (latestPoint && latestPoint.isValid) {
-        const liveY = midiToY(latestPoint.midi, height);
-        
+      // Live playhead position near right side (matches LIVE needle line)
+      const playheadOffset = window.innerWidth < 640 ? 40 : 48;
+      const liveX = width - playheadOffset;
+
+      // Shift existing points to the left
+      for (let i = 0; i < pitchHistory.length; i++) {
+        pitchHistory[i].x -= scrollSpeed;
+      }
+
+      // Remove off-screen history points
+      while (pitchHistory.length > 0 && pitchHistory[0].x < -20) {
+        pitchHistory.shift();
+      }
+
+      // Push new point at playhead
+      if (isListening) {
+        pitchHistory.push({
+          x: liveX,
+          midi: currentSample.midi,
+          cents: currentSample.cents,
+          inScale: currentSample.inScale
+        });
+      }
+
+      // Render Pitch Curve
+      if (pitchHistory.length > 1) {
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        for (let i = 1; i < pitchHistory.length; i++) {
+          const p0 = pitchHistory[i - 1];
+          const p1 = pitchHistory[i];
+
+          // Break line if voice stopped or jumped more than an octave instantaneously
+          if (p0.midi === null || p1.midi === null || Math.abs(p1.midi - p0.midi) > 9) {
+            continue;
+          }
+
+          const y0 = midiToY(p0.midi, height);
+          const y1 = midiToY(p1.midi, height);
+          const colors = getColorForPitch(p1.cents, p1.inScale);
+
+          ctx.beginPath();
+          ctx.moveTo(p0.x, y0);
+          ctx.lineTo(p1.x, y1);
+          ctx.strokeStyle = colors.stroke;
+          ctx.lineWidth = 3.5;
+          ctx.shadowColor = colors.glow;
+          ctx.shadowBlur = 10;
+          ctx.stroke();
+        }
+        ctx.shadowBlur = 0;
+      }
+
+      // Draw glowing dot at current voice position on the LIVE line
+      if (isListening && currentSample.midi !== null) {
+        const currentY = midiToY(currentSample.midi, height);
+        const colors = getColorForPitch(currentSample.cents, currentSample.inScale);
+
         ctx.beginPath();
-        ctx.fillStyle = '#ffffff';
-        ctx.arc(liveX, liveY, 4.5, 0, Math.PI * 2);
+        ctx.arc(liveX, currentY, 6, 0, Math.PI * 2);
+        ctx.fillStyle = colors.stroke;
+        ctx.shadowColor = colors.glow;
+        ctx.shadowBlur = 14;
         ctx.fill();
 
         ctx.beginPath();
-        ctx.fillStyle = latestPoint.isInScale ? 'rgba(16, 185, 129, 0.4)' : 'rgba(244, 63, 94, 0.4)';
-        ctx.arc(liveX, liveY, 10, 0, Math.PI * 2);
+        ctx.arc(liveX, currentY, 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
         ctx.fill();
+        ctx.shadowBlur = 0;
       }
+
+      animationFrameId = requestAnimationFrame(mainLoop);
     }
 
     /* =========================================================================
        EVENT LISTENERS & CONTROLS
        ========================================================================= */
-    toggleMicBtn.addEventListener('click', toggleMicrophone);
+    // Long-press tooltip support on touch devices for Microphone button
+    let longPressTimer = null;
+    let longPressTriggered = false;
+
+    toggleMicBtn.addEventListener('touchstart', () => {
+      longPressTriggered = false;
+      longPressTimer = setTimeout(() => {
+        longPressTriggered = true;
+        if (micTooltip) {
+          micTooltip.classList.remove('opacity-0');
+          micTooltip.classList.add('opacity-100');
+          setTimeout(() => {
+            micTooltip.classList.remove('opacity-100');
+            micTooltip.classList.add('opacity-0');
+          }, 1800);
+        }
+      }, 450);
+    }, { passive: true });
+
+    toggleMicBtn.addEventListener('touchend', () => {
+      clearTimeout(longPressTimer);
+    });
+
+    toggleMicBtn.addEventListener('touchmove', () => {
+      clearTimeout(longPressTimer);
+    }, { passive: true });
+
+    toggleMicBtn.addEventListener('click', (e) => {
+      if (longPressTriggered) {
+        e.preventDefault();
+        longPressTriggered = false;
+        return;
+      }
+      toggleMicrophone();
+    });
+
+    // Chrome Install Prompt Handler
+    let deferredInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      if (installAppBtn) {
+        installAppBtn.classList.remove('hidden');
+        installAppBtn.classList.add('flex');
+      }
+    });
+
+    if (installAppBtn) {
+      installAppBtn.addEventListener('click', async () => {
+        if (!deferredInstallPrompt) return;
+        deferredInstallPrompt.prompt();
+        const { outcome } = await deferredInstallPrompt.userChoice;
+        if (outcome === 'accepted') {
+          installAppBtn.classList.add('hidden');
+          installAppBtn.classList.remove('flex');
+        }
+        deferredInstallPrompt = null;
+      });
+    }
 
     clearBtn.addEventListener('click', () => {
       pitchHistory = [];
-      drawContinuousPitchCanvas(getScaleMidiClasses());
     });
 
-    rootKeySelect.addEventListener('change', () => {
-      updateScalePills();
-      drawContinuousPitchCanvas(getScaleMidiClasses());
+    rootKeySelect.addEventListener('change', (e) => {
+      rootKey = parseInt(e.target.value, 10);
+      renderScalePills();
+      buildPianoLabels();
     });
 
-    scaleTypeSelect.addEventListener('change', () => {
-      updateScalePills();
-      drawContinuousPitchCanvas(getScaleMidiClasses());
+    scaleTypeSelect.addEventListener('change', (e) => {
+      currentScale = e.target.value;
+      renderScalePills();
+      buildPianoLabels();
     });
 
     vocalRangePreset.addEventListener('change', (e) => {
-      const preset = RANGE_PRESETS[e.target.value] || RANGE_PRESETS.all;
-      currentMinMidi = preset.minMidi;
-      currentMaxMidi = preset.maxMidi;
-      rangeLabel.textContent = preset.label;
-      renderPianoRollLabels();
-      drawContinuousPitchCanvas(getScaleMidiClasses());
+      const preset = VOCAL_RANGES[e.target.value];
+      if (preset) {
+        minMidi = preset.minMidi;
+        maxMidi = preset.maxMidi;
+        rangeLabel.textContent = preset.label;
+        buildPianoLabels();
+      }
     });
 
     claritySlider.addEventListener('input', (e) => {
@@ -1009,21 +1084,27 @@
 
     scrollSpeedSelect.addEventListener('change', (e) => {
       scrollSpeed = parseFloat(e.target.value);
-      speedLabel.textContent = e.target.options[e.target.selectedIndex].text;
+      const selectedText = e.target.options[e.target.selectedIndex].text;
+      speedLabel.textContent = selectedText;
     });
 
-    // Responsive Canvas Resize Observer
-    window.addEventListener('resize', resizeCanvas);
-    const resizeObserver = new ResizeObserver(() => {
-      resizeCanvas();
+    closeModalBtn.addEventListener('click', () => {
+      messageModal.classList.add('hidden');
+      messageModal.classList.remove('flex');
     });
-    resizeObserver.observe(canvasContainer);
 
-    // Initial Setup
-    window.addEventListener('DOMContentLoaded', () => {
-      updateScalePills();
+    window.addEventListener('resize', () => {
       resizeCanvas();
+      buildPianoLabels();
     });
+
+    // Initialize App on Window Load
+    window.onload = function () {
+      renderScalePills();
+      resizeCanvas();
+      buildPianoLabels();
+      mainLoop();
+    };
   </script>
 </body>
 </html>
