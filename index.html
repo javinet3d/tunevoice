@@ -8,8 +8,10 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%25' stop-color='%2306b6d4'/><stop offset='100%25' stop-color='%2310b981'/></linearGradient></defs><rect width='64' height='64' rx='16' fill='url(%23g)'/><path d='M32 14a7 7 0 0 0-7 7v12a7 7 0 0 0 14 0V21a7 7 0 0 0-7-7zm-12 19a12 12 0 0 0 24 0h-3a9 9 0 0 1-18 0h-3zm10.5 14.9V52h3v-4.1A15 15 0 0 0 47 33h-3a12 12 0 0 1-24 0h-3a15 15 0 0 0 13.5 14.9z' fill='%230b0e14'/></svg>">
-  <link id="pwaManifest" rel="manifest">
+  <link rel="icon" type="image/svg+xml" href="./icon.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="./icon-192.png">
+  <link rel="manifest" href="./manifest.json">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
@@ -336,44 +338,14 @@
 
   <!-- Application Logic -->
   <script>
-    // PWA Fullscreen Manifest & Service Worker Setup for Chrome Installability
-    (function setupPWA() {
-      try {
-        const iconSvg = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%25' stop-color='%2306b6d4'/><stop offset='100%25' stop-color='%2310b981'/></linearGradient></defs><rect width='512' height='512' rx='112' fill='url(%23g)'/><path d='M256 112a56 56 0 0 0-56 56v96a56 56 0 0 0 112 0v-96a56 56 0 0 0-56-56zm-96 152a96 96 0 0 0 192 0h-24a72 72 0 0 1-144 0h-24zm84 119.2V416h24v-32.8A120 120 0 0 0 376 264h-24a96 96 0 0 1-192 0h-24a120 120 0 0 0 108 119.2z' fill='%230b0e14'/></svg>";
-        const manifestData = {
-          name: "VocalPitch Studio - Afinador Vocal",
-          short_name: "VocalPitch",
-          description: "Monitor de entonación y afinador vocal en tiempo real",
-          start_url: window.location.href,
-          scope: window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1),
-          display: "fullscreen",
-          orientation: "portrait",
-          background_color: "#0b0e14",
-          theme_color: "#0b0e14",
-          icons: [
-            { src: iconSvg, sizes: "192x192", type: "image/svg+xml", purpose: "any maskable" },
-            { src: iconSvg, sizes: "512x512", type: "image/svg+xml", purpose: "any maskable" }
-          ]
-        };
-        const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/manifest+json' });
-        const manifestEl = document.getElementById('pwaManifest');
-        if (manifestEl) {
-          manifestEl.href = URL.createObjectURL(manifestBlob);
-        }
-
-        if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
-          const swCode = `
-            self.addEventListener('install', (e) => self.skipWaiting());
-            self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
-            self.addEventListener('fetch', (e) => {});
-          `;
-          const swBlob = new Blob([swCode], { type: 'application/javascript' });
-          navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
-        }
-      } catch (e) {
-        console.warn("PWA setup skipped:", e);
-      }
-    })();
+    // Register Physical Service Worker for 100% Offline Support & Chrome Installability
+    if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then((reg) => console.log('Service Worker registrado:', reg.scope))
+          .catch((err) => console.warn('Error registrando Service Worker:', err));
+      });
+    }
 
     // Musical Theory Constants
     const NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
